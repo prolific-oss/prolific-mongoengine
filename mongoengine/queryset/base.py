@@ -641,7 +641,7 @@ class BaseQuerySet:
             document = self._document.objects.with_id(atomic_update.upserted_id)
         return document
 
-    def update_one(self, upsert=False, write_concern=None, full_result=False, **update):
+    def update_one(self, upsert=False, write_concern=None, full_result=False, array_filters=None, **update):
         """Perform an atomic update on the fields of the first document
         matched by the query.
 
@@ -654,6 +654,7 @@ class BaseQuerySet:
             will force an fsync on the primary server.
         :param full_result: Return the associated ``pymongo.UpdateResult`` rather than just the number
             updated items
+        :param array_filters: A list of filters specifying which array elements an update should apply.
         :param update: Django-style update keyword arguments
             full_result
         :returns the number of updated documents (unless ``full_result`` is True)
@@ -663,11 +664,14 @@ class BaseQuerySet:
             multi=False,
             write_concern=write_concern,
             full_result=full_result,
+            array_filters=array_filters,
             **update,
         )
 
     def modify(
-        self, upsert=False, full_response=False, remove=False, new=False, **update
+        self, upsert=False, full_response=False, remove=False, new=False,
+            array_filters=None,
+            **update
     ):
         """Update and return the updated document.
 
@@ -687,6 +691,7 @@ class BaseQuerySet:
         :param remove: remove rather than updating (default ``False``)
         :param new: return updated rather than original document
             (default ``False``)
+        :param array_filters: A list of filters specifying which array elements an update should apply.
         :param update: Django-style update keyword arguments
         """
 
@@ -727,6 +732,7 @@ class BaseQuerySet:
                     upsert=upsert,
                     sort=sort,
                     return_document=return_doc,
+                    array_filters=array_filters,
                     session=self._get_local_session(),
                     **self._cursor_args,
                 )
