@@ -641,7 +641,14 @@ class BaseQuerySet:
             document = self._document.objects.with_id(atomic_update.upserted_id)
         return document
 
-    def update_one(self, upsert=False, write_concern=None, full_result=False, array_filters=None, **update):
+    def update_one(
+        self,
+        upsert=False,
+        write_concern=None,
+        full_result=False,
+        array_filters=None,
+        **update,
+    ):
         """Perform an atomic update on the fields of the first document
         matched by the query.
 
@@ -669,9 +676,13 @@ class BaseQuerySet:
         )
 
     def modify(
-        self, upsert=False, full_response=False, remove=False, new=False,
-            array_filters=None,
-            **update
+        self,
+        upsert=False,
+        full_response=False,
+        remove=False,
+        new=False,
+        array_filters=None,
+        **update,
     ):
         """Update and return the updated document.
 
