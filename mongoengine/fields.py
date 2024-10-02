@@ -17,8 +17,6 @@ from bson.decimal128 import Decimal128, create_decimal128_context
 from bson.int64 import Int64
 from pymongo import ReturnDocument
 
-from mongoengine.base.common import UPDATE_OPERATORS
-
 try:
     import dateutil
 except ImportError:
