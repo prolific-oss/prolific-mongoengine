@@ -13,14 +13,14 @@ on:
     tags:
       - 'v[0-9]+\.[0-9]+\.[0-9]+*'
 env:
-  MONGODB_5_0: "5.0"
   MONGODB_6_0: "6.0"
   MONGODB_7_0: "7.0"
 
-  PYMONGO_4_6: 4.6.2
+  PYMONGO_4_6: 4.6.3
   PYMONGO_4_7: 4.7.3
   PYMONGO_4_8: 4.8.0
-  PYMONGO_4_9: 4.9
+  PYMONGO_4_9: 4.9.1
+  PYMONGO_4.10: 4.10.1
 
   MAIN_PYTHON_VERSION: 3.10
 
@@ -48,21 +48,39 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.10", 3.11]
-        MONGODB: [$MONGODB_4_0]
-        PYMONGO: [$PYMONGO_3_11]
+        MONGODB: [$MONGODB_6_0]
+        PYMONGO: [$PYMONGO_4_6]
         include:
-          - python-version: "3.10"
-            MONGODB: $MONGODB_5_0
-            PYMONGO: $PYMONGO_4_6
           - python-version: "3.10"
             MONGODB: $MONGODB_6_0
             PYMONGO: $PYMONGO_4_6
           - python-version: "3.10"
             MONGODB: $MONGODB_7_0
             PYMONGO: $PYMONGO_4_6
-          - python-version: "3.11"
-            MONGODB: $MONGODB_5_0
-            PYMONGO: $PYMONGO_4_6
+          - python-version: "3.10"
+            MONGODB: $MONGODB_6_0
+            PYMONGO: $PYMONGO_4_7
+          - python-version: "3.10"
+            MONGODB: $MONGODB_6_0
+            PYMONGO: $PYMONGO_4_8
+          - python-version: "3.10"
+            MONGODB: $MONGODB_6_0
+            PYMONGO: $PYMONGO_4_9
+          - python-version: "3.10"
+            MONGODB: $MONGODB_6_0
+            PYMONGO: $PYMONGO_4_7
+          - python-version: "3.10"
+            MONGODB: $MONGODB_7_0
+            PYMONGO: $PYMONGO_4_7
+          - python-version: "3.10"
+            MONGODB: $MONGODB_7_0
+            PYMONGO: $PYMONGO_4_8
+          - python-version: "3.10"
+            MONGODB: $MONGODB_7_0
+            PYMONGO: $PYMONGO_4_9
+          - python-version: "3.10"
+            MONGODB: $MONGODB_7_0
+            PYMONGO: $PYMONGO_4_10
           - python-version: "3.11"
             MONGODB: $MONGODB_6_0
             PYMONGO: $PYMONGO_4_6
@@ -78,6 +96,9 @@ jobs:
           - python-version: "3.11"
             MONGODB: $MONGODB_7_0
             PYMONGO: $PYMONGO_4_9
+          - python-version: "3.11"
+            MONGODB: $MONGODB_7_0
+            PYMONGO: $PYMONGO_4_10
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
@@ -101,61 +122,3 @@ jobs:
         COVERALLS_SERVICE_NAME: github-actions
       if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION }}
       run: coveralls
-
-  build_doc_dryrun:
-    # ensures that readthedocs can be built continuously
-    # to avoid that it breaks when new releases are being created
-    # The way RTD works is that it builds the doc on its side
-    # builds are visible at https://readthedocs.org/projects/mongoengine-odm/builds/
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: 3.9
-        check-latest: true
-    - name: install python dep
-      run: |
-        pip install -e .
-        pip install -r docs/requirements.txt
-    - name: build doc
-      run: |
-        cd docs
-        make html-readthedocs
-
-  build-dryrun:
-    runs-on: ubuntu-latest
-    needs: [linting, test, build_doc_dryrun]
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: 3.9
-        check-latest: true
-    - name: build dummy wheel for test-pypi
-      run: |
-        pip install wheel
-        python setup.py sdist bdist_wheel
-
-  build-n-publish:
-    runs-on: ubuntu-latest
-    needs: [linting, test, build_doc_dryrun, build-dryrun]
-    if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v')
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v5
-      with:
-        python-version: 3.9
-        check-latest: true
-    # todo separate build from publish
-    # https://stackoverflow.com/questions/59349905/which-properties-does-github-event-in-a-github-workflow-have
-    - name: build dummy wheel for test-pypi
-      run: |
-        pip install wheel
-        python setup.py sdist bdist_wheel
-    - name: publish pypi
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        password: ${{ secrets.pypi_token }}
