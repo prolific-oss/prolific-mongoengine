@@ -4,7 +4,7 @@ MongoEngine
 :Info: MongoEngine is an ORM-like layer on top of PyMongo.
 :Repository: https://github.com/MongoEngine/mongoengine
 :Author: Harry Marr (http://github.com/hmarr)
-:Maintainer: Stefan Wójcik (http://github.com/wojcikstefan)
+:Maintainer: Bastien Gerard (http://github.com/bagerard)
 
 .. image:: https://travis-ci.org/MongoEngine/mongoengine.svg?branch=master
   :target: https://travis-ci.org/MongoEngine/mongoengine
@@ -20,6 +20,10 @@ MongoEngine
 
 .. image:: https://img.shields.io/pypi/v/mongoengine.svg
   :target: https://pypi.python.org/pypi/mongoengine
+
+
+.. image:: https://readthedocs.org/projects/mongoengine-odm/badge/?version=latest
+  :target: https://readthedocs.org/projects/mongoengine-odm/builds/
 
 About
 =====
@@ -44,7 +48,7 @@ You may also have `setuptools <http://peak.telecommunity.com/DevCenter/setuptool
 and thus you can use ``easy_install -U mongoengine``. Another option is
 `pipenv <https://docs.pipenv.org/>`_. You can then use ``pipenv install mongoengine``
 to both create the virtual environment and install the package. Otherwise, you can
-download the source from `GitHub <http://github.com/MongoEngine/mongoengine>`_ and
+download the source from `GitHub <https://github.com/MongoEngine/mongoengine>`_ and
 run ``python setup.py install``.
 
 The support for Python2 was dropped with MongoEngine 0.20.0
@@ -62,7 +66,7 @@ If you utilize a ``DateTimeField``, you might also use a more flexible date pars
 
 If you need to use an ``ImageField`` or ``ImageGridFsProxy``:
 
-- Pillow>=2.0.0
+- Pillow>=7.0.0
 
 If you need to use signals:
 
